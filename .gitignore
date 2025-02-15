@@ -1,0 +1,11 @@
+# Project place file
+/Bookmarkr_1.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+/*.rbxm
+/*.rbxmx
+
+/Packages
+/build

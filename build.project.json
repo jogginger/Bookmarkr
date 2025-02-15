@@ -1,0 +1,9 @@
+{
+  "name": "Bookmarkr",
+  "tree": {
+    "$path": "build",
+    "Packages": {
+      "$path": "Packages"
+    }
+  }
+}
