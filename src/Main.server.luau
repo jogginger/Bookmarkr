@@ -1,3 +1,5 @@
 
-local TestComponent = require("@src/Components/TestComponent")
-print(TestComponent)
+local Widget = require("@src/Components/Base/Widget")
+local NewWidget = Widget()
+NewWidget.Parent = workspace
+

@@ -6,13 +6,14 @@
         "name": "path",
         "sources": {
           "@pkg": "Packages",
-          "@src": "src"
+          "@src": "src",
+          "@components": "src/Components"
         }
       },
       "target": {
         "name": "roblox",
         "rojo_sourcemap": "./sourcemap.json",
-        "indexing_style": "property"
+        "indexing_style": "find_first_child"
       }
     },
     "compute_expression",
