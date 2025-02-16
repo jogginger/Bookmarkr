@@ -1,7 +1,10 @@
 
 local Fusion = require("@pkg/fusion")
 
--- local Padding = require("@components/Base/Padding")
+local Stroke = require("@components/Base/Stroke")
+local DirectoryView = require("@components/Base/DirectoryView")
+local ItemList = require("@components/Base/ItemList")
+local Toolbar = require("@components/Base/Toolbar")
 
 return function(Properties)
     local Widget = Fusion.New "Frame" {
@@ -12,7 +15,14 @@ return function(Properties)
         Name = "Widget";
 
         [Fusion.Children] = {
+            Stroke {
+                StrokeMode = Enum.ApplyStrokeMode.Contextual;
+                JoinMode = Enum.LineJoinMode.Miter
+            };
 
+            DirectoryView();
+            ItemList();
+            Toolbar();
         }
     } :: Frame
 
