@@ -1,7 +1,5 @@
 local Fusion = require "@pkg/fusion"
 
-local CornerRadius = require "@components/Base/CornerRadius"
-local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
 local ToolbarButton = require "@components/Base/ToolbarButton"
 
