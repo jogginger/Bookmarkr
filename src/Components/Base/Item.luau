@@ -1,8 +1,5 @@
 local StudioService = game:GetService "StudioService"
 
-local Main = script.Parent.Parent
-local Assets = Main.Assets
-
 local Fusion = require "@pkg/fusion"
 local Icons = require "@src/Library/Icons"
 
@@ -10,7 +7,7 @@ local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
 local ItemActionButton = require "@components/Base/ItemActionButton"
-local BaseButton = require "@components/BaseButton"
+local BaseButton = require "@components/Base/BaseButton"
 
 local Color_Base = Color3.fromRGB(43, 43, 43)
 local Color_Hover = Color3.fromRGB(35, 35, 35)
@@ -54,7 +51,7 @@ return function(Data)
 
 					ItemActionButton {
 						Name = "Edit",
-						Icon = "rbxassetid://4627156599",
+						Icon = "rbxassetid://15911231575",
 						LayoutOrder = 1,
 					},
 
@@ -80,6 +77,7 @@ return function(Data)
 			},
 
 			Fusion.New "TextButton" {
+				Name = "Button",
 				TextWrapped = true,
 				Active = false,
 				AnchorPoint = Vector2.new(0, 0.5),
