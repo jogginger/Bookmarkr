@@ -1,9 +1,6 @@
 local ScriptEditorService = game:GetService "ScriptEditorService"
 local StudioService = game:GetService "StudioService"
 local Selection = game:GetService "Selection"
-local RunService = game:GetService "RunService"
-
-local Library = script.Parent:FindFirstChild "Library"
 
 local Fusion = require "@pkg/fusion"
 local MockData = require "@src/Library/MockData"
@@ -105,7 +102,7 @@ end
 
 -- Determines an object's type
 function GetType(Element)
-	local Name = Element[1]
+	--local Name = Element[1]
 	local Metadata = Element[2]
 
 	local Type = "Script"
@@ -241,7 +238,7 @@ local function TracePathToNode(TargetNode)
 end
 
 local function SearchElement(TargetDirectory, Name)
-	local targetNode, rootNode = BuildTreeAndFindPath(TargetDirectory, Name)
+	local targetNode = BuildTreeAndFindPath(TargetDirectory, Name)
 
 	if targetNode then
 		local pathToTarget = TracePathToNode(targetNode)
@@ -250,7 +247,7 @@ local function SearchElement(TargetDirectory, Name)
 		for I = 1, #pathToTarget - 1 do
 			local Entry = pathToTarget[I]
 			local Directory = Entry[1]
-			local Name = Entry[2]
+			--local Name = Entry[2]
 			local Parent = Entry[3]
 
 			if pathToTarget[I][1] ~= TargetDirectory then
