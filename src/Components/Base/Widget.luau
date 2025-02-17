@@ -2,11 +2,11 @@
 local Fusion = require("@pkg/fusion")
 
 local Stroke = require("@components/Base/Stroke")
-local DirectoryView = require("@components/Base/DirectoryView")
-local ItemList = require("@components/Base/ItemList")
-local Toolbar = require("@components/Base/Toolbar")
+local DirectoryView = require("@components/DirectoryView")
+local ItemList = require("@components/ItemList")
+local Toolbar = require("@components/Toolbar")
 
-return function(Properties)
+return function(Data)
     local Widget = Fusion.New "Frame" {
         BackgroundColor3 = Color3.fromRGB(46, 46, 46);
         BackgroundTransparency = 1;
@@ -20,7 +20,11 @@ return function(Properties)
                 JoinMode = Enum.LineJoinMode.Miter
             };
 
-            DirectoryView();
+            DirectoryView {
+                Stack = Data.Stack;
+                OnDirectoryOpen = Data.OnDirectoryOpen;
+                Visible = true;
+            };
             ItemList();
             Toolbar();
         }
