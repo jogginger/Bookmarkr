@@ -22,7 +22,7 @@ return function(Data)
 
             DirectoryView {
                 Stack = Data.Stack;
-                OnDirectoryOpen = Data.OnDirectoryOpen;
+                Callbacks = Data.Callbacks;
                 Visible = true;
             };
             ItemList();

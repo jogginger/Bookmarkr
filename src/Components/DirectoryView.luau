@@ -80,7 +80,7 @@ return function(Data)
 			Index = 0,
 
 			ParentStack = ParentStack,
-			OnDirectoryOpen = Data.OnDirectoryOpen,
+			OnDirectoryOpen = Data.Callbacks.OnDirectoryOpen,
 		},
 	}
 
@@ -97,7 +97,7 @@ return function(Data)
 					ParentStack = ParentStack,
 					Directory = Directory,
 
-					OnDirectoryOpen = Data.OnDirectoryOpen,
+					OnDirectoryOpen = Data.Callbacks.OnDirectoryOpen,
 				}
 		end, Fusion.cleanup),
 	}
