@@ -142,10 +142,8 @@ local function CommitEdits(ElementData, Data)
 	task.defer(function()
 		Directory:set {}
 		Directory:set(CurrentDirectory, true)
-
 		Save()
 	end)
-	--print(Directory:get())
 end
 
 -- Jumps to a specific directory and pops parent stack elements according to the index provided
@@ -247,11 +245,11 @@ local function SearchElement(TargetDirectory, Name)
 		for I = 1, #pathToTarget - 1 do
 			local Entry = pathToTarget[I]
 			local Directory = Entry[1]
-			--local Name = Entry[2]
+			local DirectoryName = Entry[2]
 			local Parent = Entry[3]
 
 			if pathToTarget[I][1] ~= TargetDirectory then
-				table.insert(Temp, { Parent, Name, Directory })
+				table.insert(Temp, { Parent, DirectoryName, Directory })
 			end
 
 			if I == #pathToTarget - 1 then
@@ -523,7 +521,7 @@ if not script.Name:find "Local" then
 		else false
 	local Icon = IsLocal and "rbxassetid://4627151481" or "rbxassetid://4627151481"
 
-	local PluginToolbar = plugin:CreateToolbar "Bookmarkr"
+	local PluginToolbar = plugin:CreateToolbar "Bookmarkr [BUILT]"
 	local ToolbarButton = PluginToolbar:CreateButton("Toggle", "Toogles the Bookmarkr UI", Icon)
 	ToolbarButton.ClickableWhenViewportHidden = true
 

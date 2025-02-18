@@ -19,10 +19,8 @@
     "compute_expression",
     "convert_index_to_field",
     "filter_after_early_return",
-    "remove_comments",
     "remove_empty_do",
     "remove_nil_declaration",
-    "remove_types",
     "remove_unused_if_branch",
     "remove_unused_while"
   ]

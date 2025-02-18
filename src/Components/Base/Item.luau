@@ -10,7 +10,6 @@ local ItemActionButton = require "@components/Base/ItemActionButton"
 local BaseButton = require "@components/Base/BaseButton"
 
 local Color_Base = Color3.fromRGB(43, 43, 43)
-local Color_Hover = Color3.fromRGB(35, 35, 35)
 local Color_Server = Color3.fromRGB(38, 217, 100)
 local Color_Client = Color3.fromRGB(76, 188, 255)
 local Color_Line = Color3.fromRGB(177, 150, 188)
@@ -121,10 +120,19 @@ return function(Data)
 		},
 	} :: Frame
 
-    local Color = Fusion.Value(Color_Base)
+    --local Color = Fusion.Value(Color_Base)
 	local SearchTerm = Data.SearchTerm
 	local SortOrder = Data.SortOrder
+
+	local IsSearched = Fusion.Computed(function()
+		if SearchTerm:get() and string.find((Data.Name or "?"):lower(), SearchTerm:get():lower()) then
+			return true
+		end
+
+		return false
+	end)
     
+	BaseButton { Button = NewItem.Button, OnButtonClick = Data.OnOpen, Mask = NewItem, OverwriteState = IsSearched }
 	for _, v in NewItem.Actions:GetChildren() do
 		if v:IsA "ImageButton" then
 			local Name = v.Name
@@ -156,25 +164,11 @@ return function(Data)
 			else "",
 	}
 
-	Fusion.Hydrate(NewItem.Button) {
-		[Fusion.OnEvent "MouseButton1Click"] = Data.OnOpen or function() end,
-		[Fusion.OnEvent "MouseEnter"] = function()
-			Color:set(Color_Hover)
-		end,
-		[Fusion.OnEvent "MouseLeave"] = function()
-			Color:set(Color_Base)
-		end,
-	}
-
 	return Fusion.Hydrate(NewItem) {
 		Visible = Data.Visible or true,
 		BackgroundColor3 = Fusion.Spring(
 			Fusion.Computed(function()
-				if SearchTerm:get() and string.find((Data.Name or "?"):lower(), SearchTerm:get():lower()) then
-					return Color_Search
-				else
-					return Color:get()
-				end
+				return IsSearched:get() and Color_Search or Color_Base
 			end),
 			40,
 			0.75
