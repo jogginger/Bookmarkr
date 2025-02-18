@@ -4,6 +4,7 @@ local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
 local BaseButton = require "@components/Base/BaseButton"
+local TextField = require "@components/Base/TextField"
 
 return function(Data)
 	local InputPrompt = Fusion.New "CanvasGroup" {
@@ -39,27 +40,18 @@ return function(Data)
 						CornerRadius = UDim.new(0, 2),
 					},
 
-					Fusion.New "TextBox" {
+					Fusion.Hydrate (TextField {}) {
 						Name = "InputField",
-						PlaceholderText = "Paste import string",
-						TextSize = 14,
-						Size = UDim2.new(0, 300, 0, 180),
-						TextColor3 = Color3.fromRGB(204, 204, 204),
 						Text = "",
-						PlaceholderColor3 = Color3.fromRGB(115, 115, 115),
-						FontFace = Font.new "rbxasset://fonts/families/RobotoMono.json",
+						TextScaled = false,
+						PlaceholderText = "Paste import string",
+						Size = UDim2.new(0, 300, 0, 180),
 						Position = UDim2.new(0, 4, 0, 4),
 						ClearTextOnFocus = false,
 						TextYAlignment = Enum.TextYAlignment.Top,
 						TextXAlignment = Enum.TextXAlignment.Left,
 						TextWrapped = true,
-						BackgroundColor3 = Color3.fromRGB(46, 46, 46),
-
-						[Fusion.Children] = {
-							Stroke {},
-							Padding { 4, 0, 0, 0 },
-							CornerRadius(),
-						},
+						FontFace = Font.new "rbxasset://fonts/families/RobotoMono.json",
 					},
 
 					Fusion.New "TextButton" {

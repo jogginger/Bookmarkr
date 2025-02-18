@@ -2,6 +2,7 @@ local Fusion = require "@pkg/fusion"
 
 local Padding = require "@components/Base/Padding"
 local ToolbarButton = require "@components/Base/ToolbarButton"
+local TextField = require "@components/Base/TextField"
 
 return function(Config)
 	local Toolbar = Fusion.New "Frame" {
@@ -58,36 +59,17 @@ return function(Config)
                 Icon = "rbxassetid://8456591132"
             };
 
-			Fusion.New "TextBox" {
+			Fusion.Hydrate (TextField {}) {
 				Name = "Search",
 				LayoutOrder = 10,
+				Text = "",
+				TextScaled = true,
+				PlaceholderText = "...",
+				Size = UDim2.new(0.5, 0, 0, 24),
 				TextWrapped = true,
 				AnchorPoint = Vector2.new(1, 0),
-				PlaceholderColor3 = Color3.fromRGB(91, 91, 91),
-				PlaceholderText = "...",
-				BorderSizePixel = 0,
-				Size = UDim2.new(0.5, 0, 0, 24),
-				TextColor3 = Color3.fromRGB(204, 204, 204),
-				BorderColor3 = Color3.fromRGB(0, 0, 0),
-				Text = "",
-				Position = UDim2.new(1, -4, 0, 4),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				FontFace = Font.new "rbxasset://fonts/families/Nunito.json",
-				TextSize = 14,
-				TextScaled = true,
-				BackgroundColor3 = Color3.fromRGB(46, 46, 46),
 
 				[Fusion.Children] = {
-					Fusion.New "UIPadding" {
-						Name = "UIPadding",
-						PaddingLeft = UDim.new(0, 4),
-					},
-
-					Fusion.New "UICorner" {
-						Name = "UICorner",
-						CornerRadius = UDim.new(0, 2),
-					},
-
 					Fusion.New "ImageLabel" {
 						Name = "ImageLabel",
 						BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -98,12 +80,6 @@ return function(Config)
 						BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 						BorderSizePixel = 0,
 						Size = UDim2.new(0, 18, 0, 18),
-					},
-
-					Fusion.New "UIStroke" {
-						Name = "UIStroke",
-						ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-						Color = Color3.fromRGB(34, 34, 34),
 					},
 				},
 			},

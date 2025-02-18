@@ -4,6 +4,7 @@ local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
 local BaseButton = require "@components/Base/BaseButton"
+local TextField = require "@components/Base/TextField"
 
 return function(Data)
 	local EditPrompt = Fusion.New "CanvasGroup" {
@@ -67,51 +68,27 @@ return function(Data)
 						},
 					},
 
-					Fusion.New "TextBox" {
+					Fusion.Hydrate (TextField {}) {
 						Name = "NameField",
 						LayoutOrder = 10,
-						TextColor3 = Color3.fromRGB(204, 204, 204),
 						Text = "",
-						BackgroundColor3 = Color3.fromRGB(46, 46, 46),
 						TextScaled = true,
-						TextXAlignment = Enum.TextXAlignment.Left,
-						PlaceholderColor3 = Color3.fromRGB(91, 91, 91),
-						FontFace = Font.new "rbxasset://fonts/families/Nunito.json",
 						PlaceholderText = "Name...",
-						TextSize = 14,
 						Size = UDim2.new(0, 180, 0, 24),
-
-						[Fusion.Children] = {
-							Stroke {},
-							Padding { 4, 0, 0, 0 },
-							CornerRadius(),
-						},
 					},
 
+					Fusion.Hydrate (TextField {}) {
+						Name = "LineField",
+						LayoutOrder = 15,
+						Text = "",
+						TextScaled = true,
+						PlaceholderText = "Line...",
+						Size = UDim2.new(0, 180, 0, 24),
+					},
+				
 					Fusion.New "UICorner" {
 						Name = "UICorner",
 						CornerRadius = UDim.new(0, 2),
-					},
-
-					Fusion.New "TextBox" {
-						Name = "LineField",
-						LayoutOrder = 15,
-						TextColor3 = Color3.fromRGB(204, 204, 204),
-						Text = "",
-						BackgroundColor3 = Color3.fromRGB(46, 46, 46),
-						TextScaled = true,
-						FontFace = Font.new "rbxasset://fonts/families/Nunito.json",
-						PlaceholderColor3 = Color3.fromRGB(91, 91, 91),
-						TextXAlignment = Enum.TextXAlignment.Left,
-						PlaceholderText = "Line...",
-						TextSize = 14,
-						Size = UDim2.new(0, 180, 0, 24),
-
-						[Fusion.Children] = {
-							Stroke {},
-							Padding { 4, 0, 0, 0 },
-							CornerRadius(),
-						},
 					},
 
 					Fusion.New "UIListLayout" {
