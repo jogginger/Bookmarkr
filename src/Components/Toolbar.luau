@@ -26,37 +26,37 @@ return function(Config)
             ToolbarButton {
                 Name = "DirectoryUp";
                 LayoutOrder = 1;
-                Icon = "rbxassetid://153287141"
+                Icon = "corner-left-up" --"rbxassetid://153287141"
             };
 
             ToolbarButton {
                 Name = "Folder";
                 LayoutOrder = 2;
-                Icon = "rbxassetid://10596127430"
+                Icon = "folder-plus" --"rbxassetid://10596127430"
             };
 
             ToolbarButton {
                 Name = "Bookmark";
                 LayoutOrder = 3;
-                Icon = "rbxassetid://4627140512"
+                Icon = "bookmark-plus" --"rbxassetid://4627140512"
             };
 
             ToolbarButton {
                 Name = "Import";
                 LayoutOrder = 4;
-                Icon = "rbxassetid://86229867714970"
+                Icon = "download" --"rbxassetid://86229867714970"
             };
 
             ToolbarButton {
                 Name = "Export";
                 LayoutOrder = 5;
-                Icon = "rbxassetid://78689563976440"
+                Icon = "upload" --"rbxassetid://78689563976440"
             };
 
             ToolbarButton {
                 Name = "Sort";
                 LayoutOrder = 6;
-                Icon = "rbxassetid://8456591132"
+                Icon = "arrow-down-a-z" --"rbxassetid://8456591132"
             };
 
 			Fusion.Hydrate (TextField {}) {
