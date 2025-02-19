@@ -11,6 +11,7 @@ return function(Data)
         BackgroundColor3 = Color3.fromRGB(46, 46, 46);
         BackgroundTransparency = 1;
         Size = UDim2.new(1, 0, 1, 0);
+        ClipsDescendants = false;
 
         Name = "Widget";
 

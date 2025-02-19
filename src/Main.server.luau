@@ -424,7 +424,7 @@ local Widget = WidgetComp {
 local Items = Widget.Items
 
 Fusion.Hydrate(Items.List) {
-	[Fusion.Children] = Fusion.ForValues(Directory, function(Data: { any })
+	[Fusion.Children] = Fusion.ForPairs(Directory, function(Index: number, Data: { any })
 		if not Data[1] then
 			return
 		end
@@ -440,12 +440,13 @@ Fusion.Hydrate(Items.List) {
 		local Tuple = { Type, Metadata, Data }
 
 		--print(Metadata.l)
-		return ItemComp {
+		return Index, ItemComp {
 			Name = Name,
 			Type = Type,
 			RunContext = if Metadata then Metadata.t else nil,
 			LineNumber = if Metadata then Metadata.l else nil,
 			InstanceType = if Metadata then Metadata.i else nil,
+			Index = Index,
 
 			SearchTerm = SearchTerm,
 			SortOrder = SortOrder,
@@ -509,9 +510,9 @@ Fusion.Hydrate(Widget.Toolbar.Search) {
 }
 
 for _, v in Widget.Toolbar:GetChildren() do
-	if v:IsA "ImageButton" then
+	if v:IsA "GuiButton" then
 		local Name = v.Name
-		BaseButtonComp { Button = v, OnButtonClick = ToolbarCallbacks["On" .. Name] }
+		BaseButtonComp { Button = v, OnButtonClick = ToolbarCallbacks["On" .. Name], Tooltip = Name }
 	end
 end
 
