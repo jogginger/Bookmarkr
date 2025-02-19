@@ -41,7 +41,7 @@ return function(Data)
 							task.cancel(TooltipStates.HideTask)
 							TooltipStates.HideTask = nil
 						end
-						TooltipStates.HideTask = task.delay(0.3, function()
+						TooltipStates.HideTask = task.delay(0.45, function()
 							TooltipStates.Text:set(Data.Tooltip)
 							task.defer(function()
 								TooltipStates.Adornee:set(Button)
