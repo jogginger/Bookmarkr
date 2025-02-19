@@ -360,6 +360,14 @@ local ToolbarCallbacks = {
 	OnBookmark = function()
 		local Current = Directory:get()
 		local ActiveScript = StudioService.ActiveScript :: LuaSourceContainer?
+		local Selection = Selection:get()
+
+		if not ActiveScript and #Selection == 0 then 
+			warn(
+				`Bookmarkr:\nMust select an instance or open a script first!"`
+			)
+			return
+		end
 
 		-- Will prioritize the active script for bookmarking
 		if ActiveScript then
@@ -367,8 +375,6 @@ local ToolbarCallbacks = {
 			Directory:set(Current)
 			Save()
 		else
-			local Selection = Selection:get()
-
 			for I = 1, #Selection do
 				local Inst = Selection[I] :: Instance
 				if Inst:IsA "LuaSourceContainer" then
@@ -509,10 +515,16 @@ Fusion.Hydrate(Widget.Toolbar.Search) {
 	end,
 }
 
+local Actions = {
+	DirectoryUp = "Step up directory",
+	Folder = "Create Folder",
+	Bookmark = "Create Bookmark",
+}
+
 for _, v in Widget.Toolbar:GetChildren() do
 	if v:IsA "GuiButton" then
 		local Name = v.Name
-		BaseButtonComp { Button = v, OnButtonClick = ToolbarCallbacks["On" .. Name], Tooltip = Name }
+		BaseButtonComp { Button = v, OnButtonClick = ToolbarCallbacks["On" .. Name], Tooltip = Actions[Name] or Name }
 	end
 end
 
