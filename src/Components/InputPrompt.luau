@@ -13,6 +13,7 @@ return function(Data)
 		BackgroundTransparency = 0.4,
 		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 		Size = UDim2.new(1, 0, 1, 0),
+		ZIndex = 30,
 
 		[Fusion.Children] = {
 			Fusion.New "TextButton" {
