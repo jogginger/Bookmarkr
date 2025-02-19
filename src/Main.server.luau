@@ -434,7 +434,8 @@ Fusion.Hydrate(Items.List) {
 		if not Data[1] then
 			return
 		end
-
+	
+		-- Migration
 		if typeof(Data[1]) == "table" and typeof(Data[1][1]) == "string" then
 			Data = Data[1]
 		end
@@ -494,8 +495,12 @@ Fusion.Hydrate(Widget) {
 						warn(Err)
 						return
 					end
-
+					
 					local Current = Directory:get()
+					if Raw and Raw[2] and typeof(Raw[2]) == "string" then
+						Raw = Raw[1]
+					end
+
 					for I = 1, #Raw do
 						table.insert(Current, Raw[I])
 					end
@@ -559,6 +564,10 @@ if not script.Name:find "Local" then
 
 	local Saved = plugin:GetSetting(SETTING_KEY)
 	Data = Saved and game:GetService("HttpService"):JSONDecode(Saved) or {}
+
+	if Data and Data[2] and typeof(Data[2]) == "string" then
+		Data = Data[1]
+	end
 else
 	print "Running locally"
 	Widget.Parent = script.Parent.Frame
