@@ -6,3 +6,4 @@ realm = "shared"
 
 [dependencies]
 fusion = "elttob/fusion@0.2.0"
+Lucide = "latte-soft/lucide-icons@0.1.2"

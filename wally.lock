@@ -5,9 +5,14 @@ registry = "test"
 [[package]]
 name = "10ki/bookmarkr"
 version = "0.1.0"
-dependencies = [["fusion", "elttob/fusion@0.2.0"]]
+dependencies = [["Lucide", "latte-soft/lucide-icons@0.1.3"], ["fusion", "elttob/fusion@0.2.0"]]
 
 [[package]]
 name = "elttob/fusion"
 version = "0.2.0"
+dependencies = []
+
+[[package]]
+name = "latte-soft/lucide-icons"
+version = "0.1.3"
 dependencies = []
