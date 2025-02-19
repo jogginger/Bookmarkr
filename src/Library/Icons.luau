@@ -1,5 +1,6 @@
 return {
-	ITEM_Script = "rbxassetid://11570895459";
-	ITEM_Folder = "rbxassetid://5650870711";
-	ITEM_Object = "rbxassetid://9087232887"
+	ITEM_Script = "file-code-2";
+	ITEM_Folder = "folder-closed";
+	ITEM_Object = "box"
+
 }

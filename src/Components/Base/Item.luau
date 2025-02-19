@@ -8,6 +8,7 @@ local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
 local ItemActionButton = require "@components/Base/ItemActionButton"
 local BaseButton = require "@components/Base/BaseButton"
+local Icon = require "@components/Base/Icon"
 
 local Color_Base = Color3.fromRGB(43, 43, 43)
 local Color_Server = Color3.fromRGB(38, 217, 100)
@@ -25,6 +26,7 @@ return function(Data)
 		Visible = false,
 		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
 		Size = UDim2.new(1, 0, 0, 30),
+		ZIndex = 0,
 
 		[Fusion.Children] = {
 			Stroke {},
@@ -37,6 +39,7 @@ return function(Data)
 				Position = UDim2.new(1, 1, 0, 0),
 				BorderColor3 = Color3.fromRGB(0, 0, 0),
 				Size = UDim2.new(0.3, 0, 1, 0),
+				ZIndex = 5,
 
 				[Fusion.Children] = {
 					Fusion.New "UIListLayout" {
@@ -50,29 +53,37 @@ return function(Data)
 
 					ItemActionButton {
 						Name = "Edit",
-						Icon = "rbxassetid://15911231575",
+						Icon = "pencil-line",
 						LayoutOrder = 1,
 					},
 
 					ItemActionButton {
 						Name = "Delete",
-						Icon = "rbxassetid://4627156599",
+						Icon = "trash-2",
 						IconColor = Color3.fromRGB(216, 80, 80),
 						LayoutOrder = 2,
 					},
 				},
 			},
 
-			Fusion.New "ImageLabel" {
-				Name = "Icon",
-				ImageColor3 = Color3.fromRGB(216, 216, 216),
-				ScaleType = Enum.ScaleType.Fit,
+			-- Fusion.New "ImageLabel" {
+			-- 	Name = "Icon",
+			-- 	ImageColor3 = Color3.fromRGB(216, 216, 216),
+			-- 	ScaleType = Enum.ScaleType.Fit,
+			-- 	AnchorPoint = Vector2.new(0, 0.5),
+			-- 	Image = "rbxassetid://11570895459",
+			-- 	BackgroundTransparency = 1,
+			-- 	Position = UDim2.new(0, 0, 0.5, 0),
+			-- 	BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+			-- 	Size = UDim2.new(0, 26, 1.36, 0),
+			-- },
+
+			Fusion.Hydrate(Icon { 
+				Icon = Icons["ITEM_" .. Data.Type or "Script"],
+				Color = if Data.RunContext then (if Data.RunContext == 1 then Color_Server else Color_Client) else nil,
+			 }) {
+				Position = UDim2.new(0, 2, 0.5, 0),
 				AnchorPoint = Vector2.new(0, 0.5),
-				Image = "rbxassetid://11570895459",
-				BackgroundTransparency = 1,
-				Position = UDim2.new(0, 0, 0.5, 0),
-				BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-				Size = UDim2.new(0, 26, 1.36, 0),
 			},
 
 			Fusion.New "TextButton" {
@@ -98,7 +109,7 @@ return function(Data)
 				RichText = true,
 				TextXAlignment = Enum.TextXAlignment.Left,
 				BackgroundTransparency = 1,
-				Position = UDim2.new(0, 32, 0, 0),
+				Position = UDim2.new(0, 28, 0, 0),
 				FontFace = Font.new(
 					"rbxasset://fonts/families/Nunito.json",
 					Enum.FontWeight.Bold,
@@ -120,7 +131,7 @@ return function(Data)
 		},
 	} :: Frame
 
-    --local Color = Fusion.Value(Color_Base)
+	--local Color = Fusion.Value(Color_Base)
 	local SearchTerm = Data.SearchTerm
 	local SortOrder = Data.SortOrder
 
@@ -131,20 +142,16 @@ return function(Data)
 
 		return false
 	end)
-    
+
 	BaseButton { Button = NewItem.Button, OnButtonClick = Data.OnOpen, Mask = NewItem, OverwriteState = IsSearched }
-	for _, v in NewItem.Actions:GetChildren() do
-		if v:IsA "ImageButton" then
+	for _, v: GuiBase2d in NewItem.Actions:GetChildren() do
+		if v:IsA("GuiButton") then
 			local Name = v.Name
 
-			BaseButton { Button = v, OnButtonClick = Data["On" .. Name] }
+			BaseButton { Button = v, OnButtonClick = Data["On" .. Name], Tooltip = Name }
 		end
 	end
 
-	NewItem.Icon.Image = Icons["ITEM_" .. Data.Type or "Script"]
-	if Data.RunContext then
-		NewItem.Icon.ImageColor3 = if Data.RunContext == 1 then Color_Server else Color_Client
-	end
 	if Data.Type == "Object" and Data.InstanceType then
 		local IconData = StudioService:GetClassIcon(Data.InstanceType)
 		if IconData then
