@@ -4,6 +4,7 @@ type StrokeConfig = {
 	StrokeMode: Enum.ApplyStrokeMode?,
 	JoinMode: Enum.LineJoinMode?,
 	Color: Color3?,
+	Transparency: number?,
 }
 
 return function(StrokeConfig: StrokeConfig)
@@ -11,6 +12,7 @@ return function(StrokeConfig: StrokeConfig)
 		ApplyStrokeMode = StrokeConfig.StrokeMode or Enum.ApplyStrokeMode.Border,
 		LineJoinMode = StrokeConfig.JoinMode or Enum.LineJoinMode.Round,
 		Color = StrokeConfig.Color or Color3.fromRGB(34, 34, 34),
+		Transparency = StrokeConfig.Transparency or 0,
 
 		Name = "Stroke",
 	} :: UIStroke
