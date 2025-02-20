@@ -1,9 +1,5 @@
-local fusion = require(script.Parent.Parent.Parent.Packages.fusion)
 local Fusion = require "@pkg/fusion"
 local Store = require "@src/Library/Store"
-local Ref = Fusion.Ref
-
-local Tooltip = require "@components/Tooltip"
 
 local Color_Base = Color3.fromRGB(43, 43, 43)
 local Color_Hover = Color3.fromRGB(35, 35, 35)
@@ -76,16 +72,13 @@ return function(Data)
 		end,
 		[Fusion.Cleanup] = function(...)
 			if Data.Tooltip then
-				task.delay(1 / 40, function()
-					local Adornee = TooltipStates.Adornee:get()
-					if Adornee == Button then
-						if TooltipStates.HideTask then
-							task.cancel(TooltipStates.HideTask)
-							TooltipStates.HideTask = nil
-						end
-						TooltipStates.Text:set ""
-						TooltipStates.Adornee:set(nil)
+				task.delay(1 / 30, function()
+					if TooltipStates.HideTask then
+						task.cancel(TooltipStates.HideTask)
+						TooltipStates.HideTask = nil
 					end
+					TooltipStates.Text:set ""
+					TooltipStates.Adornee:set(nil)
 				end)
 			end
 		end,
