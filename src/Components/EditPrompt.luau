@@ -76,6 +76,7 @@ return function(Data)
 						TextScaled = true,
 						PlaceholderText = "Name...",
 						Size = UDim2.new(0, 180, 0, 24),
+						ClearTextOnFocus = true,
 					},
 
 					Fusion.Hydrate (TextField {}) {
