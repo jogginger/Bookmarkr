@@ -9,11 +9,6 @@ local Toolbar = require("@components/Toolbar")
 local Tooltip = require ("@components/Tooltip")
 
 return function(Data)
-    Store.TooltipStates = {
-        Adornee = Fusion.Value(nil),
-        Text = Fusion.Value("")
-    }
-
     local Widget = Fusion.New "Frame" {
         BackgroundColor3 = Color3.fromRGB(46, 46, 46);
         BackgroundTransparency = 1;
@@ -34,7 +29,9 @@ return function(Data)
                 Visible = true;
             };
             ItemList();
-            Toolbar();
+            Toolbar {
+                Callbacks = Data.Callbacks
+            };
             Tooltip {
                 Adornee = Store.TooltipStates.Adornee,
                 Text = Store.TooltipStates.Text
