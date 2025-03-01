@@ -1,8 +1,11 @@
 local Fusion = require "@pkg/fusion"
 
+local Store = require "@src/Library/Store"
+
 local Padding = require "@components/Base/Padding"
 local ToolbarButton = require "@components/Base/ToolbarButton"
 local TextField = require "@components/Base/TextField"
+local SearchNavigator = require "@components/SearchNavigator"
 
 return function(Config)
 	local Toolbar = Fusion.New "Frame" {
@@ -68,6 +71,7 @@ return function(Config)
 				Size = UDim2.new(0.5, 0, 0, 24),
 				TextWrapped = true,
 				AnchorPoint = Vector2.new(1, 0),
+				ClearTextOnFocus = true,
 
 				[Fusion.Children] = {
 					Fusion.New "ImageLabel" {
@@ -81,6 +85,13 @@ return function(Config)
 						BorderSizePixel = 0,
 						Size = UDim2.new(0, 18, 0, 18),
 					},
+
+					Fusion.Hydrate(SearchNavigator {
+						Callbacks = Config.Callbacks
+					}) {
+						AnchorPoint = Vector2.new(0.5, 0);
+						--Position = UDim2.fromScale(0.5, 1) + UDim2.fromOffset(0, 4)
+					}
 				},
 			},
 		},
