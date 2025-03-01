@@ -1,9 +1,11 @@
+local PluginGuiService = game:GetService("PluginGuiService")
 local ScriptEditorService = game:GetService "ScriptEditorService"
 local StudioService = game:GetService "StudioService"
 local Selection = game:GetService "Selection"
 
 local Fusion = require "@pkg/fusion"
 local MockData = require "@src/Library/MockData"
+local Store = require "@src/Library/Store"
 
 local WidgetComp = require "@components/Base/Widget"
 local ItemComp = require "@components/Base/Item"
@@ -11,14 +13,16 @@ local InputComp = require "@components/InputPrompt"
 local EditComp = require "@components/EditPrompt"
 local BaseButtonComp = require "@components/Base/BaseButton"
 
-local Directory = Fusion.Value {}
-local ParentStack = Fusion.Value {}
-local TempParentStack = Fusion.Value {}
-local OpenName = Fusion.Value "Root"
-local Editing = Fusion.Value(nil)
-local SearchTerm = Fusion.Value(nil)
-local SortOrder = Fusion.Value(1)
-local InputPromptState = Fusion.Value(nil)
+local PluginStates = Store.PluginStates
+
+local Directory = PluginStates.Directory
+local ParentStack = PluginStates.ParentStack
+local TempParentStack = PluginStates.TempParentStack
+local OpenName = PluginStates.OpenName
+local Editing = PluginStates.Editing
+local SortOrder = PluginStates.SortOrder
+local InputPromptState = PluginStates.InputPromptState
+local SearchTerm = PluginStates.SearchTerm
 
 --local Edit = Widget.Edit
 
@@ -175,84 +179,100 @@ local function JumpToDirectory(NewDirectory, StackIndex)
 	Directory:set(NewDirectory)
 end
 
-local function BuildTreeAndFindPath(TargetDirectory, Name)
-	local resultNode = nil
+type Node = {
+	Name: string,
+	Metadata: { [string]: string | number | boolean | { any } },
+	Parent: Node?,
+	Children: { [number?]: Node? },
+}
 
-	local function CreateNode(name, metadata, parent)
+--- Creates a tree structure and searches for nodes where the name contains the searched term (case-insensitive)
+local function TreeSearch(TargetDirectory, SearchedName: string)
+	local Result = {} :: { [number?]: Node? }
+	local Results = 0
+
+	local function CreateNode(Name, Metadata, Parent): Node
 		return {
-			Name = name,
-			Metadata = metadata,
-			Parent = parent,
+			Name = Name,
+			Metadata = Metadata,
+			Parent = Parent,
 			Children = {},
 		}
 	end
 
 	local function BuildTree(CurrentDirectory, ParentNode)
-		for _, entry in ipairs(CurrentDirectory) do
-			local name = entry[1]
-			local metadata = entry[2]
+		for _, Entry in ipairs(CurrentDirectory) do
+			local Name = Entry[1]
+			local Metadata = Entry[2]
 
-			local node = CreateNode(name, metadata, ParentNode)
+			local Node = CreateNode(Name, Metadata, ParentNode)
 
 			if ParentNode then
-				table.insert(ParentNode.Children, node)
+				table.insert(ParentNode.Children, Node)
 			end
 
-			if name:lower():find(Name:lower()) then
-				resultNode = node
+			if Name:lower():find(SearchedName:lower()) then
+				--ResultNode = Node
+				table.insert(Result, Node)
+				Results += 1
 			end
 
-			if metadata and metadata.c then
-				BuildTree(metadata.c, node)
+			if Metadata and Metadata.c then
+				BuildTree(Metadata.c, Node)
 			end
 		end
 	end
 
-	local rootNode = CreateNode("Root", { c = TargetDirectory }, nil)
-	BuildTree(TargetDirectory, rootNode)
+	local RootNode = CreateNode("Root", { c = TargetDirectory }, nil)
+	BuildTree(TargetDirectory, RootNode)
 
-	return resultNode, rootNode
+	return Result, RootNode, Results
 end
 
-local function TracePathToNode(TargetNode)
-	local path = {}
-	local currentNode = TargetNode
+--- Given a node, traces parents upwards to construct a path leading to TargetNode
+local function TracePathToNode(TargetNode: Node)
+	local Path = {}
+	local CurrentNode = TargetNode
 
-	while currentNode do
-		local directory = (currentNode and currentNode.Metadata) and currentNode.Metadata.c or nil
-		table.insert(
-			path,
-			1,
-			{
-				directory,
-				currentNode.Name,
-				(currentNode.Parent and currentNode.Parent.Metadata) and currentNode.Parent.Metadata.c or nil,
-			}
-		)
-		currentNode = currentNode.Parent
+	while CurrentNode do
+		local Directory = (CurrentNode and CurrentNode.Metadata) and CurrentNode.Metadata.c or nil
+		table.insert(Path, 1, {
+			Directory,
+			CurrentNode.Name,
+			(CurrentNode.Parent and CurrentNode.Parent.Metadata) and CurrentNode.Parent.Metadata.c or nil,
+		})
+		CurrentNode = CurrentNode.Parent
 	end
 
-	return path
+	return Path
 end
 
-local function SearchElement(TargetDirectory, Name)
-	local targetNode = BuildTreeAndFindPath(TargetDirectory, Name)
+--- Given a directory, searches through elements of that directory by creating a node-tree structure and generating paths to elements with a matching name
+local function SearchElement(TargetDirectory, Name: string, SearchIndex: number?)
+	local TargetNodes, _, Results = TreeSearch(TargetDirectory, Name)
+	if not TargetNodes or Results <= 0 then
+		PluginStates.SearchResultCount:set(0)
+		return
+	end
 
-	if targetNode then
-		local pathToTarget = TracePathToNode(targetNode)
+	local TargetNode = TargetNodes[math.clamp(if SearchIndex then SearchIndex else 1, 1, #TargetNodes)]
+	PluginStates.SearchResultCount:set(Results)
+
+	if TargetNode then
+		local Path = TracePathToNode(TargetNode)
 		local Temp = {}
 
-		for I = 1, #pathToTarget - 1 do
-			local Entry = pathToTarget[I]
+		for I = 1, #Path - 1 do
+			local Entry = Path[I]
 			local Directory = Entry[1]
 			local DirectoryName = Entry[2]
 			local Parent = Entry[3]
 
-			if pathToTarget[I][1] ~= TargetDirectory then
+			if Path[I][1] ~= TargetDirectory then
 				table.insert(Temp, { Parent, DirectoryName, Directory })
 			end
 
-			if I == #pathToTarget - 1 then
+			if I == #Path - 1 then
 				SetDirectory(Directory)
 			end
 		end
@@ -278,15 +298,14 @@ local function CreateScriptBookmark(Directory: { [number]: {} }, Script: LuaSour
 		ScriptType = "Module"
 	end
 
-	table.insert(
-		Directory,
+	table.insert(Directory, {
+		Script.Name,
 		{
-			Script.Name,
-			{ l = Line or 1, s = Source, t = if ScriptType == "Module"
-				then nil
-				else (if ScriptType == "Server" then 1 else 2) },
-		}
-	)
+			l = Line or 1,
+			s = Source,
+			t = if ScriptType == "Module" then nil else (if ScriptType == "Server" then 1 else 2),
+		},
+	})
 end
 
 local function CreateInstanceBookmark(Directory: { [number]: {} }, Object: Instance)
@@ -362,10 +381,8 @@ local ToolbarCallbacks = {
 		local ActiveScript = StudioService.ActiveScript :: LuaSourceContainer?
 		local Selection = Selection:get()
 
-		if not ActiveScript and #Selection == 0 then 
-			warn(
-				`Bookmarkr:\nMust select an instance or open a script first!"`
-			)
+		if not ActiveScript and #Selection == 0 then
+			warn(`Bookmarkr:\nMust select an instance or open a script first!"`)
 			return
 		end
 
@@ -396,13 +413,37 @@ local ToolbarCallbacks = {
 		InputPromptState:set { "Import" }
 	end,
 	OnSearch = function(Text)
+		PluginStates.SearchIndex:set(1)
+
 		if string.gsub(Text, "%s", "") == "" then
+			PluginStates.SearchResultCount:set(0)
 			SearchTerm:set(nil)
 			return
 		end
+		
 		SearchTerm:set(Text)
 		local Current = GetRootDirectory()
-		SearchElement(Current, Text)
+		SearchElement(Current, Text, PluginStates.SearchIndex:get())
+	end,
+	OnSearchNavigate = function(Direction)
+		local Count = PluginStates.SearchResultCount:get()
+
+		if not SearchTerm:get() or Count <= 1 then
+			return 
+		end
+
+		local Index = PluginStates.SearchIndex:get()
+		local NewIndex = Index + Direction
+		if NewIndex > Count then 
+			NewIndex = 1
+		elseif NewIndex <= 0 then 
+			NewIndex = Count
+		end
+		
+		PluginStates.SearchIndex:set(NewIndex)
+
+		local Current = GetRootDirectory()
+		SearchElement(Current, SearchTerm:get(), NewIndex)
 	end,
 	OnSort = function()
 		local Current = SortOrder:get()
@@ -413,6 +454,9 @@ local ToolbarCallbacks = {
 		end
 	end,
 }
+
+Store.PluginCallbacks = Callbacks
+Store.ToolbarCallbacks = ToolbarCallbacks
 
 local Widget = WidgetComp {
 	Stack = Fusion.Computed(function()
@@ -434,7 +478,7 @@ Fusion.Hydrate(Items.List) {
 		if not Data[1] then
 			return
 		end
-	
+
 		-- Migration
 		if typeof(Data[1]) == "table" and typeof(Data[1][1]) == "string" then
 			Data = Data[1]
@@ -447,21 +491,22 @@ Fusion.Hydrate(Items.List) {
 		local Tuple = { Type, Metadata, Data }
 
 		--print(Metadata.l)
-		return Index, ItemComp {
-			Name = Name,
-			Type = Type,
-			RunContext = if Metadata then Metadata.t else nil,
-			LineNumber = if Metadata then Metadata.l else nil,
-			InstanceType = if Metadata then Metadata.i else nil,
-			Index = Index,
+		return Index,
+			ItemComp {
+				Name = Name,
+				Type = Type,
+				RunContext = if Metadata then Metadata.t else nil,
+				LineNumber = if Metadata then Metadata.l else nil,
+				InstanceType = if Metadata then Metadata.i else nil,
+				Index = Index,
 
-			SearchTerm = SearchTerm,
-			SortOrder = SortOrder,
+				SearchTerm = SearchTerm,
+				SortOrder = SortOrder,
 
-			OnOpen = Callbacks.OnOpen(unpack(Tuple)),
-			OnEdit = Callbacks.OnEdit(unpack(Tuple)),
-			OnDelete = Callbacks.OnDelete(unpack(Tuple)),
-		}
+				OnOpen = Callbacks.OnOpen(unpack(Tuple)),
+				OnEdit = Callbacks.OnEdit(unpack(Tuple)),
+				OnDelete = Callbacks.OnDelete(unpack(Tuple)),
+			}
 	end, Fusion.cleanup),
 }
 
@@ -495,7 +540,7 @@ Fusion.Hydrate(Widget) {
 						warn(Err)
 						return
 					end
-					
+
 					local Current = Directory:get()
 					if Raw and Raw[2] and typeof(Raw[2]) == "string" then
 						Raw = Raw[1]
