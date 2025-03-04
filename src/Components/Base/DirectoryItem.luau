@@ -1,8 +1,6 @@
 local Fusion = require "@pkg/fusion"
 
-local Color_Text_Base = Color3.fromRGB(158, 158, 158)
-local Color_Text_Hover = Color3.fromRGB(103, 103, 103)
-local Color_Text_Active = Color3.fromRGB(255, 188, 155)
+local Theme = require "@src/Library/Theme"
 
 return function(Data)
 	local DirectoryItem = Fusion.New "TextButton" {
@@ -14,7 +12,7 @@ return function(Data)
 		ZIndex = 2,
 		Size = UDim2.new(0, 0, 1, 0),
 		RichText = true,
-		TextColor3 = Color3.fromRGB(158, 158, 158),
+		--TextColor3 = Theme.Get("Color_Text_Secondary"),
 		Text = "Root",
 		TextSize = 14,
 		BackgroundTransparency = 1,
@@ -29,7 +27,7 @@ return function(Data)
 				Visible = false,
 				ScaleType = Enum.ScaleType.Fit,
 				BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-				ImageColor3 = Color3.fromRGB(158, 158, 158),
+				ImageColor3 = Theme.Get("Color_Text_Secondary"),
 				Image = "rbxassetid://4726772330",
 				BackgroundTransparency = 1,
 				Position = UDim2.new(1, 0, 0, 0),
@@ -61,9 +59,9 @@ return function(Data)
 	local Color = Fusion.Computed(function()
 		local Length = #ParentStack:get()
 		if Index == Length then
-			return Color_Text_Active
+			return Theme.Get("Color_Text_Accent1"):get()
 		else
-			return Hovering:get() and Color_Text_Hover or Color_Text_Base
+			return Hovering:get() and Theme.Get("Color_Text_Hover"):get() or Theme.Get("Color_Text_Secondary"):get()
 		end
 	end)
 
