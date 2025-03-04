@@ -15,6 +15,8 @@ local Store = {
         SearchTerm = Fusion.Value(nil);
         SearchIndex = Fusion.Value(1);
         SearchResultCount = Fusion.Value(0);
+
+        CurrentTheme = Fusion.Value("Dark");
     };
     TooltipStates = {
         Adornee = Fusion.Value(nil),
