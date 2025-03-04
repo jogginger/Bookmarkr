@@ -1,6 +1,7 @@
 local Fusion = require "@pkg/fusion"
 
 local Store = require "@src/Library/Store"
+local Theme = require "@src/Library/Theme"
 
 local Padding = require "@components/Base/Padding"
 local CornerRadius = require "@components/Base/CornerRadius"
@@ -45,7 +46,7 @@ return function(Config)
 
             Fusion.New "Frame" {
                 Name = "Holder",
-                BackgroundColor3 = Color3.fromRGB(46, 46, 46),
+                BackgroundColor3 = Theme.Get("Color_Container_Base"),
                 Size = UDim2.fromScale(1, 1),
 
                 [Fusion.Children] = {
@@ -65,7 +66,7 @@ return function(Config)
                         Name = "Label",
                         TextWrapped = true,
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        TextColor3 = Color3.fromRGB(204, 204, 204),
+                        TextColor3 = Theme.Get("Color_Text_Base"),
         
                         Text = Fusion.Computed(function()
                             local ResultCount = Store.PluginStates.SearchResultCount:get()
