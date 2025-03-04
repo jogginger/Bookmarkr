@@ -1,4 +1,4 @@
-local PluginGuiService = game:GetService("PluginGuiService")
+local _PluginGuiService = game:GetService("PluginGuiService")
 local ScriptEditorService = game:GetService "ScriptEditorService"
 local StudioService = game:GetService "StudioService"
 local Selection = game:GetService "Selection"
@@ -7,7 +7,7 @@ local Fusion = require "@pkg/fusion"
 local MockData = require "@src/Library/MockData"
 local Store = require "@src/Library/Store"
 
-local WidgetComp = require "@components/Base/Widget"
+local WidgetComp = require "@components/Widget"
 local ItemComp = require "@components/Base/Item"
 local InputComp = require "@components/InputPrompt"
 local EditComp = require "@components/EditPrompt"
@@ -454,6 +454,17 @@ local ToolbarCallbacks = {
 		end
 	end,
 }
+
+-- Theme handling
+local StudioTheme = settings().Studio.Theme.Name
+PluginStates.CurrentTheme:set(StudioTheme)
+
+settings().Studio.ThemeChanged:Connect(function(...)  
+	task.defer(function()
+		local NewTheme = settings().Studio.Theme.Name
+		PluginStates.CurrentTheme:set(NewTheme)
+	end)
+end)
 
 Store.PluginCallbacks = Callbacks
 Store.ToolbarCallbacks = ToolbarCallbacks
