@@ -2,6 +2,7 @@ local StudioService = game:GetService "StudioService"
 
 local Fusion = require "@pkg/fusion"
 local Icons = require "@src/Library/Icons"
+local Theme = require "@src/Library/Theme"
 
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
@@ -10,11 +11,9 @@ local ItemActionButton = require "@components/Base/ItemActionButton"
 local BaseButton = require "@components/Base/BaseButton"
 local Icon = require "@components/Base/Icon"
 
-local Color_Base = Color3.fromRGB(43, 43, 43)
 local Color_Server = Color3.fromRGB(38, 217, 100)
 local Color_Client = Color3.fromRGB(76, 188, 255)
 local Color_Line = Color3.fromRGB(177, 150, 188)
-local Color_Search = Color3.fromRGB(43, 70, 56)
 
 local function GetNameWeight(Name)
 	return string.byte(string.lower(string.sub(Name, 1, 1)))
@@ -103,7 +102,7 @@ return function(Data)
 				Name = "Title",
 				TextWrapped = true,
 				BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-				TextColor3 = Color3.fromRGB(204, 204, 204),
+				TextColor3 = Theme.Get("Color_Text_Base"),
 				Text = "ModuleScript",
 				TextScaled = true,
 				RichText = true,
@@ -175,7 +174,7 @@ return function(Data)
 		Visible = Data.Visible or true,
 		BackgroundColor3 = Fusion.Spring(
 			Fusion.Computed(function()
-				return IsSearched:get() and Color_Search or Color_Base
+				return IsSearched:get() and Theme.Get("Color_Item_Search"):get() or Theme.Get("Color_Item_Base"):get()
 			end),
 			40,
 			0.75
