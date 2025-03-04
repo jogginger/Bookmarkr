@@ -1,5 +1,6 @@
 local Fusion = require "@pkg/fusion"
 local Lucide = require "@pkg/Lucide"
+local Theme = require "@src/Library/Theme"
 
 local Padding = require "@components/Base/Padding"
 
@@ -18,7 +19,7 @@ return function(Config)
         Image = Asset.Url,
         ImageRectOffset = Asset.ImageRectOffset,
         ImageRectSize = Asset.ImageRectSize,
-        ImageColor3 = Config.Color or Color3.fromRGB(255, 255, 255),
+        ImageColor3 = Config.Color or Theme.Get("Color_Icon"),
         ScaleType = Enum.ScaleType.Fit,
 
         [Fusion.Children] = {
