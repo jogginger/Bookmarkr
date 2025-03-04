@@ -2,6 +2,8 @@ local Fusion = require "@pkg/fusion"
 local Lucide = require "@pkg/Lucide"
 local Ref = Fusion.Ref
 
+local Theme = require "@src/Library/Theme"
+
 local Padding = require "@components/Base/Padding"
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
@@ -34,10 +36,10 @@ return function(Config)
 			Size = UDim2.fromOffset(25, 5),
 			ZIndex = 25,
 			AutomaticSize = Enum.AutomaticSize.XY,
-			BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+			BackgroundColor3 = Theme.Get("Color_Tooltip_Base"),
 			BackgroundTransparency = Transparency,
 			TextTransparency = Transparency,
-			TextColor3 = Color3.fromRGB(204, 204, 204),
+			TextColor3 = Theme.Get("Color_Text_Base"),
 			FontFace = Font.new("rbxasset://fonts/families/Nunito.json", Enum.FontWeight.Bold),
 			Text = Config.Text,
 			Visible = true,
