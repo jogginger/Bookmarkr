@@ -1,4 +1,5 @@
 local Fusion = require "@pkg/fusion"
+local Theme = require "@src/Library/Theme"
 
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
@@ -10,7 +11,7 @@ return function(Config)
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, 60),
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(52, 52, 52),
+		BackgroundColor3 = Theme.Get("Color_Container_Tertiary"),
 		BorderSizePixel = 0,
 		Size = UDim2.new(1, -8, 1, -64),
 

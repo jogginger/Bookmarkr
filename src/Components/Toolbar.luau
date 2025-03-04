@@ -1,17 +1,19 @@
 local Fusion = require "@pkg/fusion"
 
 local Store = require "@src/Library/Store"
+local Theme = require "@src/Library/Theme"
 
 local Padding = require "@components/Base/Padding"
 local ToolbarButton = require "@components/Base/ToolbarButton"
 local TextField = require "@components/Base/TextField"
 local SearchNavigator = require "@components/SearchNavigator"
+local Icon = require "@components/Base/Icon"
 
 return function(Config)
 	local Toolbar = Fusion.New "Frame" {
 		Name = "Toolbar",
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(64, 64, 64),
+		BackgroundColor3 = Theme.Get("Color_Container_Secondary"),
 		BorderSizePixel = 0,
 		Size = UDim2.new(1, 0, 0, 32),
 
@@ -74,16 +76,23 @@ return function(Config)
 				ClearTextOnFocus = true,
 
 				[Fusion.Children] = {
-					Fusion.New "ImageLabel" {
-						Name = "ImageLabel",
-						BorderColor3 = Color3.fromRGB(0, 0, 0),
+					-- Fusion.New "ImageLabel" {
+					-- 	Name = "ImageLabel",
+					-- 	BorderColor3 = Color3.fromRGB(0, 0, 0),
+					-- 	AnchorPoint = Vector2.new(1, 0),
+					-- 	Image = "rbxassetid://11496279085",
+					-- 	BackgroundTransparency = 1,
+					-- 	Position = UDim2.new(1, -3, 0, 3),
+					-- 	BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+					-- 	BorderSizePixel = 0,
+					-- 	Size = UDim2.new(0, 18, 0, 18),
+					-- },
+					Fusion.Hydrate(Icon {
+						Icon = "search",
+					}) {
 						AnchorPoint = Vector2.new(1, 0),
-						Image = "rbxassetid://11496279085",
-						BackgroundTransparency = 1,
-						Position = UDim2.new(1, -3, 0, 3),
-						BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-						BorderSizePixel = 0,
 						Size = UDim2.new(0, 18, 0, 18),
+						Position = UDim2.new(1, -3, 0, 3)
 					},
 
 					Fusion.Hydrate(SearchNavigator {

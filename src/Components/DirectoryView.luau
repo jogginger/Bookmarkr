@@ -1,4 +1,5 @@
 local Fusion = require "@pkg/fusion"
+local Theme = require "@src/Library/Theme"
 
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
@@ -10,7 +11,7 @@ return function(Data)
 		Name = "DirectoryView",
 		Position = UDim2.new(0, 0, 0, 30),
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(64, 64, 64),
+		BackgroundColor3 = Theme.Get("Color_Container_Secondary"),
 		BorderSizePixel = 0,
 		Size = UDim2.new(1, 0, 0, 26),
 
@@ -51,7 +52,7 @@ return function(Data)
 				Name = "BG",
 				Active = true,
 				BorderColor3 = Color3.fromRGB(0, 0, 0),
-				BackgroundColor3 = Color3.fromRGB(42, 42, 42),
+				BackgroundColor3 = Theme.Get("Color_Container_Base"),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BorderSizePixel = 0,
 				Selectable = true,
