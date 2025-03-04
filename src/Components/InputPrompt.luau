@@ -1,5 +1,7 @@
 local Fusion = require "@pkg/fusion"
 
+local Theme = require "@src/Library/Theme"
+
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
 local Padding = require "@components/Base/Padding"
@@ -33,7 +35,7 @@ return function(Data)
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				ZIndex = 2,
 				AutomaticSize = Enum.AutomaticSize.XY,
-				BackgroundColor3 = Color3.fromRGB(46, 46, 46),
+				BackgroundColor3 = Theme.Get("Color_Container_Base"),
 
 				[Fusion.Children] = {
 					Fusion.New "UICorner" {
