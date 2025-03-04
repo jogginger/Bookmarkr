@@ -1,9 +1,8 @@
 local Fusion = require "@pkg/fusion"
-local Lucide = require "@pkg/Lucide"
 
 local CornerRadius = require "@components/Base/CornerRadius"
 local Stroke = require "@components/Base/Stroke"
-local Padding = require "@components/Base/Padding"
+local _Padding = require "@components/Base/Padding"
 local Icon = require "@components/Base/Icon"
 
 type ButtonConfig = {
