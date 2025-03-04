@@ -1,15 +1,12 @@
 local Fusion = require "@pkg/fusion"
 local Store = require "@src/Library/Store"
-
-local Color_Base = Color3.fromRGB(43, 43, 43)
-local Color_Hover = Color3.fromRGB(35, 35, 35)
-local Color_Pressed = Color3.fromRGB(60, 60, 60)
+local Theme = require "@src/Library/Theme"
 
 return function(Data)
 	local Button = Data.Button :: GuiButton
 	local OverwriteState = Data.OverwriteState
 
-	local Color = Fusion.Value(Color_Base)
+	local ButtonState = Fusion.Value(1) -- 1: Base 2: Hover 3: Press
 	local Hovering = Fusion.Value(false)
 
 	local TooltipStates = Store.TooltipStates
@@ -21,10 +18,14 @@ return function(Data)
 			end
 		end,
 		[Fusion.OnEvent "MouseButton1Down"] = function()
-			Color:set(Color_Pressed)
+			ButtonState:set(3)
+
+			--Color:set(Theme.Get("Color_Button_Press"):get())
 		end,
 		[Fusion.OnEvent "MouseButton1Up"] = function()
-			Color:set(Hovering:get() and Color_Hover or Color_Base)
+			ButtonState:set(Hovering:get() and 2 or 1)
+
+			--Color:set(Hovering:get() and Theme.Get("Color_Button_Hover"):get() or Theme.Get("Color_Button_Base"):get())
 		end,
 		[Fusion.OnEvent "InputBegan"] = function(Input: InputObject)
 			if Input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -46,8 +47,10 @@ return function(Data)
 					end)
 				end
 
-				Color:set(Color_Hover)
 				Hovering:set(true)
+				ButtonState:set(2)
+
+				--Color:set(Theme.Get("Color_Button_Hover"):get())
 			end
 		end,
 		[Fusion.OnEvent "InputEnded"] = function(Input: InputObject)
@@ -66,8 +69,11 @@ return function(Data)
 						end)
 					end
 				end
-				Color:set(Color_Base)
+
 				Hovering:set(false)
+				ButtonState:set(1)
+
+				--Color:set(Theme.Get("Color_Button_Base"):get())
 			end
 		end,
 		[Fusion.Cleanup] = function(...)
@@ -87,12 +93,26 @@ return function(Data)
 	}
 
 	local ButtonColor = Fusion.Computed(function()
+		--Theme.Get("Color_Button_Base"):get(true)
+
 		if OverwriteState and OverwriteState:get() then
 			return (if Data.Mask then Data.Mask else Button).BackgroundColor3
 		else
-			return Color:get()
+			local State = ButtonState:get()
+			return (
+				if State == 1 then Theme.Get("Color_Button_Base"):get()
+				elseif State == 2 then Theme.Get("Color_Button_Hover"):get()
+				elseif State == 3 then Theme.Get("Color_Button_Press"):get()
+				else Theme.Get("Color_Button_Base"):get()
+			)
 		end
 	end)
+
+	if Button:IsA("TextButton") then 
+		Fusion.Hydrate(Button) { 
+			TextColor3 = Theme.Get("Color_Text_Base")
+		}
+	end
 
 	if not Data.Mask then
 		Fusion.Hydrate(Button) {
