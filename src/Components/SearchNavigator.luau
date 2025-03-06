@@ -131,7 +131,5 @@ return function(Config)
 		},
 	} :: CanvasGroup
 
-	print(Config.Callbacks)
-
 	return Navigator
 end
