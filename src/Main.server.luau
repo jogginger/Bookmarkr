@@ -30,8 +30,6 @@ local SearchTerm = PluginStates.SearchTerm
 local SETTING_KEY = "BOOKMARKR_SETTING"
 local Data
 
-plugin:SetSetting(SETTING_KEY, nil)
-
 --[[
 	DATA FORMAT:
 	
@@ -135,8 +133,6 @@ end
 --- Commits edits to an element's data
 local function CommitEdits(ElementData, Data)
 	local CurrentDirectory = Directory:get()
-
-	print(ElementData, CurrentDirectory)
 
 	local Index = ElementData.Index
 	local Name = CurrentDirectory[Index][1]
