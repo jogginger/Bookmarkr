@@ -1,4 +1,4 @@
-local _PluginGuiService = game:GetService("PluginGuiService")
+local _PluginGuiService = game:GetService "PluginGuiService"
 local ScriptEditorService = game:GetService "ScriptEditorService"
 local StudioService = game:GetService "StudioService"
 local Selection = game:GetService "Selection"
@@ -30,6 +30,8 @@ local SearchTerm = PluginStates.SearchTerm
 local SETTING_KEY = "BOOKMARKR_SETTING"
 local Data
 
+plugin:SetSetting(SETTING_KEY, nil)
+
 --[[
 	DATA FORMAT:
 	
@@ -43,7 +45,7 @@ local Data
 	}
 ]]
 
--- Sets the current directory to a new directory
+--- Sets the current directory to a new directory
 local function SetDirectory(NewDirectory, Parent)
 	if Parent then
 		local CurrentParentStack = ParentStack:get()
@@ -54,7 +56,7 @@ local function SetDirectory(NewDirectory, Parent)
 	Directory:set(NewDirectory)
 end
 
--- Steps to the upper directory
+--- Steps to the upper directory
 local function StepUpDirectory()
 	if #ParentStack:get() > 0 then
 		local CurrentParentStack = ParentStack:get()
@@ -69,12 +71,12 @@ local function StepUpDirectory()
 	end
 end
 
--- Gets the root directory
+--- Gets the root directory
 local function GetRootDirectory()
 	return #ParentStack:get() > 0 and ParentStack:get()[1][1] or Directory:get()
 end
 
--- Saves parent directory
+--- Saves parent directory
 local function Save()
 	local JSON = game:GetService("HttpService"):JSONEncode(GetRootDirectory())
 
@@ -86,10 +88,12 @@ local function Save()
 	end
 end
 
--- Gets an object from a path string
-function GetObject(Path)
+--- Gets an object from a path string
+function GetObject(Path): Instance
 	local Parents = Path:split "."
 	local Root = game
+
+	-- Currently lacks the ability to discern same-name instances, might figure out a way around that
 
 	for i, Next in Parents do
 		Root = Root:FindFirstChild(Next)
@@ -104,8 +108,8 @@ function GetObject(Path)
 	return Root
 end
 
--- Determines an object's type
-function GetType(Element)
+--- Determines an object's type
+function GetType(Element): string
 	--local Name = Element[1]
 	local Metadata = Element[2]
 
@@ -123,14 +127,16 @@ function GetType(Element)
 	return Type
 end
 
--- Edit an element
+--- Starts editing an element
 function EditElement(ElementData)
 	Editing:set(ElementData)
 end
 
--- Commit edits
+--- Commits edits to an element's data
 local function CommitEdits(ElementData, Data)
 	local CurrentDirectory = Directory:get()
+
+	print(ElementData, CurrentDirectory)
 
 	local Index = ElementData.Index
 	local Name = CurrentDirectory[Index][1]
@@ -150,18 +156,18 @@ local function CommitEdits(ElementData, Data)
 	end)
 end
 
--- Jumps to a specific directory and pops parent stack elements according to the index provided
+--- Jumps to a specific directory and pops parent stack elements according to the index provided
 local function JumpToDirectory(NewDirectory, StackIndex)
 	local Stack = ParentStack:get()
 	local StackSize = #Stack
 
 	if StackSize < 1 then
-		warn "Stack empty"
+		warn "Bookmarkr:\nStack empty"
 		return
 	end
 
 	if StackIndex > StackSize then
-		warn("Invalid target index:", StackIndex)
+		warn("Bookmarkr:\nInvalid target index:", StackIndex)
 		return
 	end
 
@@ -283,6 +289,7 @@ local function SearchElement(TargetDirectory, Name: string, SearchIndex: number?
 	end
 end
 
+--- Creates a bookmark for a script
 local function CreateScriptBookmark(Directory: { [number]: {} }, Script: LuaSourceContainer & Script)
 	local Source = Script:GetFullName()
 	local ScriptType = Script:IsA "LocalScript" and "Client" or "Server"
@@ -308,9 +315,64 @@ local function CreateScriptBookmark(Directory: { [number]: {} }, Script: LuaSour
 	})
 end
 
+--- Creates a bookmark for an instance
 local function CreateInstanceBookmark(Directory: { [number]: {} }, Object: Instance)
 	local Path = Object:GetFullName()
 	table.insert(Directory, { Object.Name, { s = Path, i = Object.ClassName } })
+end
+
+--- Validates an input table for importing
+local function ValidateInput(InputTable): boolean
+	if typeof(InputTable) ~= "table" then
+		return false
+	end
+
+	if (not InputTable[1]) or (#InputTable <= 0) then
+		return false
+	end
+
+	return true
+end
+
+local function ImportString(JSON: string)
+	local Raw
+	local Success, Err = pcall(function()
+		Raw = game:GetService("HttpService"):JSONDecode(JSON)
+	end)
+
+	if not Success then
+		warn(`Bookmarkr:\n`, Err)
+		return
+	end
+
+	local Current = Directory:get()
+
+	-- Format migration
+	if Raw and Raw[2] and typeof(Raw[2]) == "string" then
+		Raw = Raw[1]
+	end
+
+	-- Imported raw object/script bookmark
+	if Raw and typeof(Raw[1]) == "string" then
+		Raw = { Raw }
+	end
+
+	-- Preventing over-nested tables from being imported (would confuse the directory system)
+	if Raw and Raw[1] and Raw[1][1] and typeof(Raw[1][1]) ~= "string" then
+		warn(`Bookmarkr:\nMalformed input data detected for table:`, { Raw[1] }, `skipping import`)
+		return
+	end
+
+	for I = 1, #Raw do
+		if not ValidateInput(Raw[I]) then
+			warn(`Bookmarkr:\nMalformed input data detected for table:`, { Raw[I] }, `skipping import`)
+			continue
+		end
+		table.insert(Current, Raw[I])
+	end
+
+	Directory:set(Current)
+	Save()
 end
 
 local Callbacks = {
@@ -420,7 +482,7 @@ local ToolbarCallbacks = {
 			SearchTerm:set(nil)
 			return
 		end
-		
+
 		SearchTerm:set(Text)
 		local Current = GetRootDirectory()
 		SearchElement(Current, Text, PluginStates.SearchIndex:get())
@@ -429,17 +491,17 @@ local ToolbarCallbacks = {
 		local Count = PluginStates.SearchResultCount:get()
 
 		if not SearchTerm:get() or Count <= 1 then
-			return 
+			return
 		end
 
 		local Index = PluginStates.SearchIndex:get()
 		local NewIndex = Index + Direction
-		if NewIndex > Count then 
+		if NewIndex > Count then
 			NewIndex = 1
-		elseif NewIndex <= 0 then 
+		elseif NewIndex <= 0 then
 			NewIndex = Count
 		end
-		
+
 		PluginStates.SearchIndex:set(NewIndex)
 
 		local Current = GetRootDirectory()
@@ -459,7 +521,7 @@ local ToolbarCallbacks = {
 local StudioTheme = settings().Studio.Theme.Name
 PluginStates.CurrentTheme:set(StudioTheme)
 
-settings().Studio.ThemeChanged:Connect(function(...)  
+settings().Studio.ThemeChanged:Connect(function(...)
 	task.defer(function()
 		local NewTheme = settings().Studio.Theme.Name
 		PluginStates.CurrentTheme:set(NewTheme)
@@ -542,27 +604,7 @@ Fusion.Hydrate(Widget) {
 				if Data.Action == "Import" and Data.InputValue then
 					local Input = Data.InputValue
 
-					local Raw
-					local Success, Err = pcall(function()
-						Raw = game:GetService("HttpService"):JSONDecode(Input)
-					end)
-
-					if not Success then
-						warn(Err)
-						return
-					end
-
-					local Current = Directory:get()
-					if Raw and Raw[2] and typeof(Raw[2]) == "string" then
-						Raw = Raw[1]
-					end
-
-					for I = 1, #Raw do
-						table.insert(Current, Raw[I])
-					end
-
-					Directory:set(Current)
-					Save()
+					ImportString(Input)
 				end
 			end,
 		},
@@ -580,6 +622,8 @@ local Actions = {
 	DirectoryUp = "Step up directory",
 	Folder = "Create Folder",
 	Bookmark = "Create Bookmark",
+	Import = "Import from string",
+	Export = "Export directory as string",
 }
 
 for _, v in Widget.Toolbar:GetChildren() do
@@ -615,7 +659,7 @@ if not script.Name:find "Local" then
 		WidgetDock.Enabled = not WidgetDock.Enabled
 	end)
 
-	print "Running as plugin"
+	--print "Running as plugin"
 	Widget.Parent = WidgetDock
 
 	local Saved = plugin:GetSetting(SETTING_KEY)
@@ -625,12 +669,12 @@ if not script.Name:find "Local" then
 		Data = Data[1]
 	end
 else
-	print "Running locally"
+	--print "Running locally"
 	Widget.Parent = script.Parent.Frame
 	Widget.Visible = true
 
 	Data = MockData
 end
 
-print "Loaded"
+--print "Loaded"
 SetDirectory(Data)
