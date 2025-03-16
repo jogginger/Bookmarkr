@@ -1,4 +1,10 @@
 local process = require("@lune/process")
+local fs = require("@lune/fs")
+
+-- Create build folder if it doesn't exist
+if not fs.isDir("build") then
+    fs.writeDir("build")
+end
 
 print("Building...")
 
