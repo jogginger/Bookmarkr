@@ -2,6 +2,8 @@ local Fusion = require "@pkg/fusion"
 
 local Theme = require "@src/Library/Theme"
 
+local Icon = require "@components/Base/Icon"
+
 return function(Data)
 	local DirectoryItem = Fusion.New "TextButton" {
 		Name = "DirectoryItem",
@@ -22,18 +24,28 @@ return function(Data)
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 
 		[Fusion.Children] = {
-			Fusion.New "ImageLabel" {
+			-- Fusion.New "ImageLabel" {
+			-- 	Name = "Pointer",
+			-- 	Visible = false,
+			-- 	ScaleType = Enum.ScaleType.Fit,
+			-- 	BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+			-- 	ImageColor3 = Theme.Get("Color_Text_Secondary"),
+			-- 	Image = "rbxassetid://4726772330",
+			-- 	BackgroundTransparency = 1,
+			-- 	Position = UDim2.new(1, 0, 0, 0),
+			-- 	ZIndex = 2,
+			-- 	Size = UDim2.new(0, 20, 1, 0),
+			-- },
+
+			Fusion.Hydrate(Icon { 
+				Icon = "chevron-right", 
+				Color = Theme.Get("Color_Text_Secondary") 
+			}) {
 				Name = "Pointer",
-				Visible = false,
-				ScaleType = Enum.ScaleType.Fit,
-				BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-				ImageColor3 = Theme.Get("Color_Text_Secondary"),
-				Image = "rbxassetid://4726772330",
-				BackgroundTransparency = 1,
-				Position = UDim2.new(1, 0, 0, 0),
+				Size = UDim2.new(0, 22, 1, 0),
 				ZIndex = 2,
-				Size = UDim2.new(0, 20, 1, 0),
-			},
+				Position = UDim2.new(1, 0, 0, 0),
+			}
 		},
 	} :: Frame
 
