@@ -14,12 +14,21 @@ A Roblox Studio plugin for easily creating and managing script/instance bookmark
 
 ## Installation
 ### Via Roblox Marketplace
-Simply install the plugin from the Roblox Marketplace
+Simply install the plugin from the [Roblox Marketplace](https://create.roblox.com/store/asset/104556895236019/Bookmarkr)
 
 ### Via file
 Grab the latest .rbxm from the releases, insert it into studio, then right click and save as local plugin or upload it as one
 
 ### Build from source
 1. Clone the repository
-2. Run `rokit install` ([Install rokit](https://github.com/rojo-rbx/rokit) if not owned)
-3. Run `lune LuneBuild.luau` to build the rbxm
+
+2. Make sure you have [rokit](https://github.com/rojo-rbx/rokit) installed
+
+---
+#### If you **do** have [Lune](https://lune-org.github.io/docs/getting-started/1-installation) installed, you can skip this step (`rokit install` is also ran by `scripts/Install`)
+- Run `rokit install` to install lune
+---
+
+3. Run `lune run scripts/Install` to install tools and packages
+
+4. Run `lune run scripts/Build` to build the rbxm
