@@ -1,6 +1,7 @@
 # Bookmarkr
 
 A Roblox Studio plugin for easily creating and managing script/instance bookmarks in your workspace.
+Detailed description in the [DevForum Post](https://devforum.roblox.com/t/bookmarkr-easy-to-use-bookmarking-plugin-for-scripts-and-instances/3554055)
 
 ## Features
 - Simplistic interface
