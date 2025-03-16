@@ -133,16 +133,22 @@ end
 --- Commits edits to an element's data
 local function CommitEdits(ElementData, Data)
 	local CurrentDirectory = Directory:get()
+	
+	local Success, Err = pcall(function()
+		local Index = ElementData.Index
+		local Name = CurrentDirectory[Index][1]
 
-	local Index = ElementData.Index
-	local Name = CurrentDirectory[Index][1]
-
-	CurrentDirectory[Index][1] = Data.NameValue or Name
-	if ElementData.Type == "Script" and tonumber(Data.LineValue) then
-		if not CurrentDirectory[Index][2] then
-			CurrentDirectory[Index][2] = {}
+		CurrentDirectory[Index][1] = Data.NameValue or Name
+		if ElementData.Type == "Script" and tonumber(Data.LineValue) then
+			if not CurrentDirectory[Index][2] then
+				CurrentDirectory[Index][2] = {}
+			end
+			CurrentDirectory[Index][2].l = tonumber(Data.LineValue)
 		end
-		CurrentDirectory[Index][2].l = tonumber(Data.LineValue)
+	end)
+	
+	if not Success then
+		warn("Bookmarkr:\n", Err)
 	end
 
 	task.defer(function()
@@ -206,6 +212,11 @@ local function TreeSearch(TargetDirectory, SearchedName: string)
 		for _, Entry in ipairs(CurrentDirectory) do
 			local Name = Entry[1]
 			local Metadata = Entry[2]
+
+			if not Name then
+				 warn(`Bookmarkr:\nWarning: potentially malformed element without name found within {ParentNode and ParentNode.Name or "{NO NAME}"} when searching for "{SearchedName}"`)
+				 continue
+			end 
 
 			local Node = CreateNode(Name, Metadata, ParentNode)
 
@@ -330,6 +341,7 @@ local function ValidateInput(InputTable): boolean
 	return true
 end
 
+--- Imports elements from a JSON string
 local function ImportString(JSON: string)
 	local Raw
 	local Success, Err = pcall(function()
@@ -374,18 +386,18 @@ end
 local Callbacks = {
 	OnOpen = function(Type, Metadata, self)
 		return function()
-			if Type == "Folder" then
+			if Type == "Folder" and Metadata and Metadata.c then
 				OpenName:set(self[1])
 				SetDirectory(Metadata.c, Directory:get())
 			elseif Type == "Script" then
-				if Metadata.s then
+				if Metadata and Metadata.s then
 					local Script = GetObject(Metadata.s)
 					if Script then
 						plugin:OpenScript(Script, Metadata.l or nil)
 					end
 				end
 			elseif Type == "Object" then
-				if Metadata.s then
+				if Metadata and Metadata.s then
 					local Object = GetObject(Metadata.s)
 					if Object then
 						Selection:set { Object }
@@ -545,11 +557,11 @@ local Items = Widget.Items
 Fusion.Hydrate(Items.List) {
 	[Fusion.Children] = Fusion.ForPairs(Directory, function(Index: number, Data: { any })
 		if not Data[1] then
-			return
+			return Index, nil
 		end
 
 		-- Migration
-		if typeof(Data[1]) == "table" and typeof(Data[1][1]) == "string" then
+		if typeof(Data[1]) == "table" and (Data[1][1] and typeof(Data[1][1]) == "string") then
 			Data = Data[1]
 		end
 
@@ -559,7 +571,6 @@ Fusion.Hydrate(Items.List) {
 		local Type = GetType(Data)
 		local Tuple = { Type, Metadata, Data }
 
-		--print(Metadata.l)
 		return Index,
 			ItemComp {
 				Name = Name,
