@@ -646,7 +646,7 @@ if not script.Name:find "Local" then
 		else false
 	local Icon = IsLocal and "rbxassetid://4627151481" or "rbxassetid://4627151481"
 
-	local PluginToolbar = plugin:CreateToolbar "Bookmarkr [BUILT]"
+	local PluginToolbar = plugin:CreateToolbar "Bookmarkr"
 	local ToolbarButton = PluginToolbar:CreateButton("Toggle", "Toogles the Bookmarkr UI", Icon)
 	ToolbarButton.ClickableWhenViewportHidden = true
 
